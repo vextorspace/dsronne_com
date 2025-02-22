@@ -29,7 +29,7 @@ jobs:
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.3
         with:
-          ssh-private-key: ${{ secrets.SSH_DEPLOY_PRIVATE_KEY }}
+          ssh-private-key: ${{ secrets.SSH_DEPLAY_PRIVATE_KEY }}
 
       # Step 5: Deploy code via SSH/rsync
       - name: Deploy to Server
