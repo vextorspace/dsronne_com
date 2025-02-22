@@ -1,0 +1,36 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the latest code
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      # Step 2: Run Tests
+      - name: Run Tests
+        run: |
+          python manage.py test
+          
+      # Step 2: Set up SSH using a GitHub Action
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_DEPLOY_PRIVATE_KEY }}
+
+      # Step 3: Deploy code via SSH/rsync
+      - name: Deploy to Server
+        run: |
+          # Option A: Use rsync to sync files (adjust source and destination as needed)
+          rsync -avz --delete ./ vextorspace@dsronne.com:/var/www/dsronne.com/
+
+          # Option B: Alternatively, run remote commands directly:
+          # ssh user@your.server.com 'cd /path/to/your/website && git pull && ./deploy_script.sh'
+
