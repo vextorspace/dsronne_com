@@ -30,7 +30,15 @@ jobs:
       - name: Add server to known_hosts
         run: |
           ssh-keyscan -H dsronne.com >> ~/.ssh/known_hosts
-      - name: Deploy to Server
+   
+      - name: Deploy to Server via SSH and Git Pull
         run: |
-          rsync -avz --delete --exclude-from='- .gitignore' ./ vextorspace@dsronne.com:~/dsronne.com
+          ssh vextorspace@dsronne.com << 'EOF'
+            cd ~/dsronne.com
+            git pull origin main
+            source .venv/bin/activate
+            pip install -r requirements.txt
+            python manage.py migrate  
+            systemctl restart gunicorn
+          EOF
 
