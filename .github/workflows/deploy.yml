@@ -32,5 +32,5 @@ jobs:
           ssh-keyscan -H dsronne.com >> ~/.ssh/known_hosts
       - name: Deploy to Server
         run: |
-          rsync -avz --delete --filter='- .gitignore' ./ vextorspace@dsronne.com:~/dsronne.com
+          rsync -avz --delete --exclude-from='- .gitignore' ./ vextorspace@dsronne.com:~/dsronne.com
 
