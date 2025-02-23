@@ -39,6 +39,6 @@ jobs:
             source .venv/bin/activate
             pip install -r requirements.txt
             python dsronne_com/manage.py migrate  
-            systemctl restart gunicorn
+            sudo systemctl restart gunicorn
           EOF
 
