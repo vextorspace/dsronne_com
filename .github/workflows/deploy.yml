@@ -26,10 +26,6 @@ jobs:
         uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.SSH_DEPLAY_PRIVATE_KEY }}
-
-
-      - name: Test Secret Key
-        run: echo ${{ secrets.SSH_DEPLAY_PRIVATE_KEY }} | wc -c
   
       - name: Add server to known_hosts
         run: |
