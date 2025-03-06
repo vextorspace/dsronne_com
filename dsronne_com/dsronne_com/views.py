@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from .stoic_forms import StoicQuestionForm
+from .ai_librarian import AiLibrarian
 
 def home(request):
     return render(request, 'dsronne_com/home.html')
@@ -11,7 +12,8 @@ def stoic(request):
     if request.method == 'POST':
         form = StoicQuestionForm(request.POST)
         if form.is_valid():
-            answer = form.cleaned_data['question']
+            question = form.cleaned_data['question']
+            answer = AiLibrarian().question_stoics(question)
     else:
         form = StoicQuestionForm()
 
