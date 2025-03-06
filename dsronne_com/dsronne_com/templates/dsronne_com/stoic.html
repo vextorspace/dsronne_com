@@ -6,4 +6,16 @@
 {% block content %}
     <h1>Stoic Wisdom</h1>
     <!-- Add your stoic page content here -->
+    <h2>Ask the sages</h2>
+    <form action="{% url 'stoic' %}" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Ask">
+    </form>
+    {% if answer %}
+    <div class="answer-section">
+    <h3>Sages once said:</h3>
+    <p>{{  answer }}</p>
+    </div>
+    {% endif %}
 {% endblock %}
