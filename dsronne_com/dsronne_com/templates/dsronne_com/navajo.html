@@ -1,4 +1,3 @@
-<!-- stoic.html -->
 {% extends 'dsronne_com/base.html' %}
 
 {% block title %}Navajo{% endblock %}
@@ -15,23 +14,49 @@
     Ultimately I would like to make an archival tool which allows the Navajo to curate the information offered up by the
     archivist, and also to create an actual AI trained ground up with Navajo knowledge.
     <h2>Ask the librarian</h2>
-    <form id="navajoForm" action="{% url 'navajo' %}" method="post">
+    <form id="navajoForm" method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <input type="submit" value="Ask">
     </form>
     <div class="loading-dots" id="loadingDots"></div>
-
-    {% if answer %}
-    <div class="answer-section" id="answerSection">
-    <h3>My librarian says:</h3>
-    <p>{{  answer }}</p>
-    </div>
-    {% endif %}
+    <div class="answer-section" id="answerSection"></div>
 
     <script>
     document.addEventListener("DOMContentLoaded", function() {
-        initializeFormWithLoading('navajoForm', 'answerSection', 'loadingDots');
+        const form = document.getElementById('navajoForm');
+        const loadingDots = document.getElementById('loadingDots');
+        const answerSection = document.getElementById('answerSection');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Show loading animation
+            loadingDots.style.display = 'block';
+            answerSection.style.display = 'none';
+
+            const formData = new FormData(this);
+
+            fetch(this.action || window.location.href, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                loadingDots.style.display = 'none';
+                answerSection.style.display = 'block';
+                answerSection.innerHTML = data.result;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                loadingDots.style.display = 'none';
+                answerSection.innerHTML = 'An error occurred while processing your request.';
+                answerSection.style.display = 'block';
+            });
+        });
     });
     </script>
 {% endblock %}
