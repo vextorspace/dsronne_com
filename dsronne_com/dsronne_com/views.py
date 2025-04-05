@@ -4,7 +4,6 @@ from .ai_librarian import AiLibrarian
 from .navajo_forms import NavajoQuestionForm
 from django.http import JsonResponse
 
-ai_librarian = AiLibrarian()
 def home(request):
     return render(request, 'dsronne_com/home.html')
 
@@ -26,7 +25,9 @@ def stoic(request):
                       'answer': answer
                   })
 
-def navajo(request):
+def navajo(request, ai_librarian=None):
+    if not ai_librarian:
+        ai_librarian = AiLibrarian()
     if request.method == 'POST':
         form = NavajoQuestionForm(request.POST)
         if form.is_valid():
