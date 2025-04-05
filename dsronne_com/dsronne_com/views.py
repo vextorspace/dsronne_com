@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from .stoic_forms import StoicQuestionForm
 from .ai_librarian import AiLibrarian
-
+from .navajo_forms import NavajoQuestionForm
 def home(request):
     return render(request, 'dsronne_com/home.html')
 
@@ -22,3 +22,21 @@ def stoic(request):
                       'form': form,
                       'answer': answer
                   })
+
+def navajo(request):
+    answer = None
+
+    if request.method == 'POST':
+        form = NavajoQuestionForm(request.POST)
+        if form.is_valid():
+            question = form.cleaned_data['question']
+            answer = AiLibrarian().question_navajo(question)
+    else:
+        form = NavajoQuestionForm()
+
+    return render(request, 'dsronne_com/navajo.html',
+                  {
+                      'form': form,
+                      'answer': answer
+                  })
+

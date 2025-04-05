@@ -1,0 +1,37 @@
+<!-- stoic.html -->
+{% extends 'dsronne_com/base.html' %}
+
+{% block title %}Navajo{% endblock %}
+
+{% block content %}
+    <h1>Navajo Wisdom</h1>
+    <h2>Disclaimer</h2>
+    I believe asking ChatGPT to behave like a Navajo would be a disrespectful act. It would be a Navajo skin on top of
+    an english construct. However, there is a lot of knowledge available on the internet. ChatGPT is very good at
+    acting like the librarian to find this. I have done my best to create a prompt that prevents my librarian from
+    applying its own english bias to the responses and limit it to only providing you the Navajo source that offers the
+    knowledge you are looking for.
+
+    Ultimately I would like to make an archival tool which allows the Navajo to curate the information offered up by the
+    archivist, and also to create an actual AI trained ground up with Navajo knowledge.
+    <h2>Ask the librarian</h2>
+    <form id="navajoForm" action="{% url 'navajo' %}" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Ask">
+    </form>
+    <div class="loading-dots" id="loadingDots"></div>
+
+    {% if answer %}
+    <div class="answer-section" id="answerSection">
+    <h3>My librarian says:</h3>
+    <p>{{  answer }}</p>
+    </div>
+    {% endif %}
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        initializeFormWithLoading('navajoForm', 'answerSection', 'loadingDots');
+    });
+    </script>
+{% endblock %}
