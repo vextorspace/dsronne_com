@@ -19,3 +19,33 @@
     margin: 10px 0;
     border: 1px solid #ccc;
 }
+
+.container {
+    display: flex;
+}
+
+.content {
+    flex-grow: 1;
+    padding: 20px;
+}
+
+.nav-bar {
+    background-image: url("../images/navigation_tree.jpg");
+    background-repeat: no-repeat;
+    width: 200px;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+    padding: 0px;
+    font-size: 1.5em;
+    color: white;
+}
+.nav-bar a {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    font-size: 1.5em;
+    color: #30FFFF;
+}
+.nav-bar a:hover {
+    background-color: #e9ecef;
+}

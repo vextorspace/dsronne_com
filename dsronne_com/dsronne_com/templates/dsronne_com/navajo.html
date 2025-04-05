@@ -24,38 +24,20 @@
 
     <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const form = document.getElementById('navajoForm');
-        const loadingDots = document.getElementById('loadingDots');
-        const answerSection = document.getElementById('answerSection');
+        // Initialize form handling using form-handlers.js
+        initializeFormWithLoading('navajoForm', 'answerSection', 'loadingDots');
 
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            // Show loading animation
-            loadingDots.style.display = 'block';
-            answerSection.style.display = 'none';
-
-            const formData = new FormData(this);
-
-            fetch(this.action || window.location.href, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRFToken': formData.get('csrfmiddlewaretoken')
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                loadingDots.style.display = 'none';
-                answerSection.style.display = 'block';
-                answerSection.innerHTML = data.result;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                loadingDots.style.display = 'none';
-                answerSection.innerHTML = 'An error occurred while processing your request.';
-                answerSection.style.display = 'block';
-            });
+        // Add Enter key handling
+        const textarea = document.querySelector('#navajoForm textarea');
+        textarea.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                const submitEvent = new SubmitEvent('submit', {
+                    bubbles: true,
+                    cancelable: true
+                });
+                document.getElementById('navajoForm').dispatchEvent(submitEvent);
+            }
         });
     });
     </script>

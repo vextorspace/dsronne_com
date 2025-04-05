@@ -39,6 +39,7 @@ jobs:
             source .venv/bin/activate
             pip install -r requirements.txt
             python dsronne_com/manage.py migrate  
+            python manage.py collectstatic
             sudo systemctl restart gunicorn
           EOF
 
