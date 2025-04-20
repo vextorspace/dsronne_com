@@ -13,12 +13,20 @@
 
     Ultimately I would like to make an archival tool which allows the Navajo to curate the information offered up by the
     archivist, and also to create an actual AI trained ground up with Navajo knowledge.
-    <h2>Ask the librarian</h2>
-    <form id="navajoForm" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Ask">
-    </form>
+    <div style="display: flex; gap: 20px; align-items: flex-start;">
+        <div style="flex: 1;">
+            <h2>Ask the librarian</h2>
+            <form id="navajoForm" method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" value="Ask">
+            </form>
+        </div>
+        <div style="flex: 1; background: #f9f9f9; padding: 10px; border-radius: 4px;">
+            <h2>Prompt Template</h2>
+            <pre style="white-space: pre-wrap; word-wrap: break-word;">{{ prompt_template }}</pre>
+        </div>
+    </div>
     <div class="loading-dots" id="loadingDots"></div>
     <div class="answer-section" id="answerSection"></div>
 
