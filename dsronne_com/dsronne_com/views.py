@@ -14,21 +14,24 @@ def home(request):
 
 @login_required
 def stoic(request):
-    answer = None
-
+    """Handle stoic questions via AJAX or render the form on GET."""
     if request.method == 'POST':
         form = StoicQuestionForm(request.POST)
         if form.is_valid():
             question = form.cleaned_data['question']
             answer = AiLibrarian().question_stoics(question)
-    else:
-        form = StoicQuestionForm()
-
-    return render(request, 'dsronne_com/stoic.html',
-                  {
-                      'form': form,
-                      'answer': answer
-                  })
+            return JsonResponse({
+                'result': f'<h3>Sages once said:</h3><p>{answer}</p>'
+            })
+        else:
+            # Return form errors as HTML
+            errors = form.errors.as_ul()
+            return JsonResponse({
+                'result': f'<div class="errorlist">{errors}</div>'
+            })
+    # GET request
+    form = StoicQuestionForm()
+    return render(request, 'dsronne_com/stoic.html', {'form': form})
 
 @login_required
 def navajo(request, ai_librarian=None):
