@@ -5,13 +5,20 @@
 
 {% block content %}
     <h1>Stoic Wisdom</h1>
-    <!-- Add your stoic page content here -->
-    <h2>Ask the sages</h2>
-    <form id="stoicForm" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Ask">
-    </form>
+    <div style="display: flex; gap: 20px; align-items: flex-start;">
+        <div style="flex: 1;">
+            <h2>Ask the sages</h2>
+            <form id="stoicForm" method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" value="Ask">
+            </form>
+        </div>
+        <div style="flex: 1; background: #f9f9f9; padding: 10px; border-radius: 4px;">
+            <h2>Prompt Template</h2>
+            <pre style="white-space: pre-wrap; word-wrap: break-word;">{{ prompt_template }}</pre>
+        </div>
+    </div>
     <div class="loading-dots" id="stoicLoading"></div>
     <div class="answer-section" id="stoicAnswer"></div>
 
