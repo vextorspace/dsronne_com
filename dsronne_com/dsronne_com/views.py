@@ -50,7 +50,9 @@ def navajo(request, ai_librarian=None):
             })
     else:
         form = NavajoQuestionForm()
-    return render(request, 'dsronne_com/navajo.html', {'form': form})
+    # Render form with prompt template on GET
+    return render(request, 'dsronne_com/navajo.html',
+                  {'form': form, 'prompt_template': ai_librarian.NAVAJO_PROMPT})
    
 def register(request):
     """Allow a new user to register with email and password."""
