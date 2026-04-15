@@ -8,7 +8,7 @@ class AiLibrarian:
         self.llm = ChatOpenAI(
             model="gpt-4o",
             temperature=0.1,
-            max_tokens=1024,
+            max_tokens=2048,
             openai_api_key=os.getenv("OPENAI_API_KEY")
         )
         self.tavily = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
@@ -38,31 +38,35 @@ class AiLibrarian:
                             The following search results may help you find real passages. Use them as a guide but apply your own judgment:
                             {context}
 
-                            Find two passages from these thinkers that genuinely address the philosophical depth of the question.
+                            Find five candidate passages from these thinkers that address the philosophical depth of the question.
                             Include a direct quote for each where possible, not just a summary of the idea.
                             Prefer lesser-known passages over the most frequently cited quotes.
-                            They may agree, contrast, or complement each other.
-                            Present the first, then connect to the second with a natural transition such as 'Then again, [author] reminds us...' or 'Yet [author] offers a different angle...'.
-                            After presenting both passages, add one sentence explaining how together they address the question.
-                            Cite the author and work for each. If you cannot find two good matches, say so plainly.
+                            Number each passage and cite the author and work.
+                            Do not connect them yet -- just list all five candidates.
 
                             Question: {question}
                         """
 
         verify_template = """
-                            You are a rigorous fact-checker reviewing a librarian's response for accuracy.
+                            You are a rigorous fact-checker reviewing a librarian's list of candidate passages for accuracy.
 
                             The following search results are provided to help you verify the quotes:
                             {context}
 
-                            For each quote or passage in the response below:
-                            - If search results confirm the quote, keep it as-is.
-                            - If you are confident a quote is fabricated, misattributed, or significantly misworded, replace it with one you are more confident is real, or remove it and note why.
-                            - If you are uncertain about a quote but it is plausible, keep it but add a brief note such as '(approximate wording)' after the citation.
-                            - Preserve the tone, structure, and flow of the original response.
-                            - Do not add preamble or explain your verification process. Return only the corrected response.
+                            For each of the five candidate passages below:
+                            - If search results confirm the quote, mark it as verified.
+                            - If you are confident a quote is fabricated, misattributed, or significantly misworded, remove it.
+                            - If you are uncertain but it is plausible, keep it and add '(approximate wording)' after the citation.
 
-                            Original response:
+                            From the passages that survive verification, select the best two that together most deeply address the question.
+                            They may agree, contrast, or complement each other.
+                            Present the first, then connect to the second with a natural transition such as 'Then again, [author] reminds us...' or 'Yet [author] offers a different angle...'.
+                            After presenting both, add one sentence explaining how together they address the question.
+                            If fewer than two survive, present what remains honestly.
+
+                            Do not add preamble or explain your verification process. Return only the final response.
+
+                            Candidate passages:
                             {response}
                         """
 
@@ -99,38 +103,39 @@ class AiLibrarian:
                             The following search results may help you find real passages. Use them as a guide but apply your own judgment:
                             {context}
 
-                            Find two passages that address the question. Include a direct quote for each where possible.
-                            Prefer lesser-known sources over widely repeated material.
-                            Present the first passage, then connect to the second with a transition that honors the oral tradition,
-                            such as 'Another elder speaks to this...' or 'From a different voice among the people...'.
-                            After presenting both, add one sentence explaining how together they speak to the question.
-                            Cite the speaker, author, or approximate source for each.
-
-                            If you cannot find two authentic passages from real named sources, offer one if you can find one.
-                            If you cannot find even one, say only: I could not find a real Navajo voice on this topic.
-                            Never present a general description of Navajo philosophy or an unnamed traditional story as if it were a real quote from a real person.
+                            Find five candidate passages that address the question. Include a direct quote for each where possible.
+                            Each candidate must come from a named real person or a specifically identified traditional source.
+                            Never include a general description of Navajo philosophy as a candidate.
+                            Number each passage and cite the speaker, author, or approximate source.
+                            Do not connect them yet -- just list all five candidates.
+                            If you cannot find five, list as many as you can find from real named sources.
 
                             Question: {question}
                         """
 
         verify_template = """
-                            You are a rigorous fact-checker with deep respect for Navajo culture reviewing a librarian's response for accuracy.
+                            You are a rigorous fact-checker with deep respect for Navajo culture reviewing a librarian's list of candidate passages.
 
                             Fabricating or misattributing Navajo voices is harmful. Apply a high standard.
 
                             The following search results are provided to help you verify the quotes:
                             {context}
 
-                            For each quote or passage in the response below:
-                            - If search results confirm the quote, keep it as-is.
-                            - If a passage is a general description of Navajo philosophy rather than a real quote from a named person, remove it entirely -- this is fabrication.
-                            - If you are confident a quote is fabricated, misattributed, or significantly misworded, remove it entirely rather than replacing it with another guess.
-                            - If you are uncertain about a quote but it is plausible and from a named real person, keep it but add a brief note such as '(source approximate)' after the citation.
-                            - If removal leaves only one passage or none, say so honestly rather than padding the response.
-                            - Preserve the tone, structure, and flow of the original response.
-                            - Do not add preamble or explain your verification process. Return only the corrected response.
+                            For each candidate passage below:
+                            - If search results confirm the quote, mark it as verified.
+                            - If a passage comes from a named real person and is plausible, keep it and add '(approximate wording)' after the citation.
+                            - If a passage is a general description of Navajo philosophy with no named real person, remove it.
+                            - If a passage is clearly invented or wildly misattributed, remove it.
 
-                            Original response:
+                            From the passages that survive verification, select the best two that together most meaningfully address the question.
+                            Present the first passage, then connect to the second with a transition that honors the oral tradition,
+                            such as 'Another elder speaks to this...' or 'From a different voice among the people...'.
+                            After presenting both, add one sentence explaining how together they speak to the question.
+                            If fewer than two survive, present what remains honestly.
+
+                            Do not add preamble or explain your verification process. Return only the final response.
+
+                            Candidate passages:
                             {response}
                         """
 
