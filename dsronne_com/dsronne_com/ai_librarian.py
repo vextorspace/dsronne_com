@@ -6,15 +6,15 @@ from tavily import TavilyClient
 class AiLibrarian:
     def __init__(self):
         self.llm = ChatOpenAI(
-            model="gpt-5",
+            model="gpt-5.4",
             temperature=0.1,
-            max_tokens=2048,
+            max_completion_tokens=4096,
             openai_api_key=os.getenv("OPENAI_API_KEY")
         )
         self.verifier_llm = ChatOpenAI(
-            model="gpt-5",
+            model="gpt-5.4",
             temperature=0.1,
-            max_tokens=2048,
+            max_completion_tokens=4096,
             openai_api_key=os.getenv("OPENAI_API_KEY")
         )
         self.tavily = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
