@@ -13,10 +13,13 @@ def stoic(request):
         form = StoicQuestionForm(request.POST)
         if form.is_valid():
             question = form.cleaned_data['question']
-            answer = AiLibrarian().question_stoics(question)
-            return JsonResponse({
-                'result': f'<h3>Sages once said:</h3><p>{answer}</p>'
-            })
+            try:
+                answer = AiLibrarian().question_stoics(question)
+                return JsonResponse({
+                    'result': f'<h3>Sages once said:</h3><p>{answer}</p>'
+                })
+            except Exception as e:
+                return JsonResponse({'result': f'<p><strong>Error:</strong> {e}</p>'})
     else:
         form = StoicQuestionForm()
 
@@ -29,10 +32,13 @@ def navajo(request, ai_librarian=None):
         form = NavajoQuestionForm(request.POST)
         if form.is_valid():
             question = form.cleaned_data['question']
-            answer = ai_librarian.question_navajo(question)
-            return JsonResponse({
-                'result': f'<h3>My librarian says:</h3><p>{answer}</p>'
-            })
+            try:
+                answer = ai_librarian.question_navajo(question)
+                return JsonResponse({
+                    'result': f'<h3>My librarian says:</h3><p>{answer}</p>'
+                })
+            except Exception as e:
+                return JsonResponse({'result': f'<p><strong>Error:</strong> {e}</p>'})
     else:
         form = NavajoQuestionForm()
     return render(request, 'dsronne_com/navajo.html', {'form': form})
