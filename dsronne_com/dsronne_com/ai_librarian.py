@@ -35,14 +35,30 @@ class AiLibrarian:
                             Question: {question}
                         """
 
+        verify_template = """
+                            You are a rigorous fact-checker reviewing a librarian's response for accuracy.
+
+                            For each quote or passage in the response below:
+                            - Assess whether the quote is likely to be accurate and genuinely from the cited author and work.
+                            - If you are confident a quote is fabricated, misattributed, or significantly misworded, replace it with one you are more confident is real, or remove it and note why.
+                            - If you are uncertain about a quote but it is plausible, keep it but add a brief note such as '(approximate wording)' after the citation.
+                            - Do not alter quotes you are confident are accurate.
+                            - Preserve the tone, structure, and flow of the original response.
+                            - Do not add preamble or explain your verification process. Return only the corrected response.
+
+                            Original response:
+                            {response}
+                        """
+
         question_prompt = ChatPromptTemplate.from_template(prompt_template)
+        verify_prompt = ChatPromptTemplate.from_template(verify_template)
 
-        # Create the chain
         question_chain = question_prompt | self.llm
+        verify_chain = verify_prompt | self.llm
 
-        # Run the chain
-        answer = question_chain.invoke({"question": question})
-        return answer.content.strip()
+        first_response = question_chain.invoke({"question": question})
+        verified_response = verify_chain.invoke({"response": first_response.content.strip()})
+        return verified_response.content.strip()
 
     def question_navajo(self, question):
         print(f"API Key loaded: {'Yes' if os.getenv('OPENAI_API_KEY') else 'No'}")
@@ -70,11 +86,29 @@ class AiLibrarian:
                             Question: {question}
                         """
 
+        verify_template = """
+                            You are a rigorous fact-checker with deep respect for Navajo culture reviewing a librarian's response for accuracy.
+
+                            Fabricating or misattributing Navajo voices is harmful. Apply a high standard.
+
+                            For each quote or passage in the response below:
+                            - Assess whether the quote is likely to be authentic and genuinely from the cited speaker, author, or source.
+                            - If you are confident a quote is fabricated, misattributed, or significantly misworded, remove it entirely and note why rather than replacing it with another guess.
+                            - If you are uncertain about a quote but it is plausible, keep it but add a brief note such as '(source approximate)' after the citation.
+                            - Do not alter quotes you are confident are accurate.
+                            - Preserve the tone, structure, and flow of the original response.
+                            - Do not add preamble or explain your verification process. Return only the corrected response.
+
+                            Original response:
+                            {response}
+                        """
+
         question_prompt = ChatPromptTemplate.from_template(prompt_template)
+        verify_prompt = ChatPromptTemplate.from_template(verify_template)
 
-        # Create the chain
         question_chain = question_prompt | self.llm
+        verify_chain = verify_prompt | self.llm
 
-        # Run the chain
-        answer = question_chain.invoke({"question": question})
-        return answer.content.strip()
+        first_response = question_chain.invoke({"question": question})
+        verified_response = verify_chain.invoke({"response": first_response.content.strip()})
+        return verified_response.content.strip()
