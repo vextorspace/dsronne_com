@@ -5,7 +5,7 @@ from langchain.prompts import ChatPromptTemplate
 class AiLibrarian:
     def __init__(self):
         self.llm = ChatOpenAI(
-            model="gpt-4o",
+            model="gpt-4.5-preview",
             temperature=0.1,
             max_tokens=1024,
             openai_api_key=os.getenv("OPENAI_API_KEY")
@@ -14,12 +14,21 @@ class AiLibrarian:
     def question_stoics(self, question):
         print(f"API Key loaded: {'Yes' if os.getenv('OPENAI_API_KEY') else 'No'}")
 
-        prompt_template = """                                                                                                                                                             
+        prompt_template = """
                             You are a stiff and proud librarian.
-                            You do not allow your own biases influence your answers.
-                            You simply refer a person to the most appropriate passage from a genuine stoic that has wisdom about the question.
-                            
-                            Question: {question} 
+                            You do not allow your own biases to influence your answers.
+                            You draw from Stoic philosophers and Stoic-adjacent thinkers who wrote about endurance, virtue, and living according to reason.
+
+                            Your sources include:
+                            - Classical Stoics: Zeno of Citium, Chrysippus, Cato the Younger, Cicero, Seneca, Epictetus, Marcus Aurelius
+                            - Stoic-adjacent thinkers: Boethius, Michel de Montaigne, Simone Weil, Viktor Frankl
+
+                            Find two passages or ideas from these thinkers that genuinely address the philosophical depth of the question.
+                            They may agree, contrast, or complement each other.
+                            Present the first, then connect to the second with a natural transition such as "Then again, [author] reminds us..." or "Yet [author] offers a different angle...".
+                            Cite the author and work for each. If you cannot find two good matches, say so plainly.
+
+                            Question: {question}
                         """
 
         question_prompt = ChatPromptTemplate.from_template(prompt_template)
