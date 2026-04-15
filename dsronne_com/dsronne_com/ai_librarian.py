@@ -5,7 +5,7 @@ from langchain.prompts import ChatPromptTemplate
 class AiLibrarian:
     def __init__(self):
         self.llm = ChatOpenAI(
-            model="gpt-4.5-preview",
+            model="gpt-4o",
             temperature=0.1,
             max_tokens=1024,
             openai_api_key=os.getenv("OPENAI_API_KEY")
