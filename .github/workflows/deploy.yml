@@ -35,13 +35,13 @@ jobs:
    
       - name: Deploy to Server via SSH and Git Pull
         run: |
-          ssh vextorspace@dsronne.com << 'EOF'
+          ssh -A vextorspace@dsronne.com << 'EOF'
             cd ~/dsronne.com
             git pull origin main
             source .venv/bin/activate
             pip install -r requirements.txt
             python dsronne_com/manage.py migrate  
-            python dsronne_com/manage.py collectstatic
+            python dsronne_com/manage.py collectstatic --noinput
             sudo systemctl restart gunicorn
           EOF
 
