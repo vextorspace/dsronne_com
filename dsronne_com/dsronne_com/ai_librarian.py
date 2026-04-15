@@ -1,6 +1,7 @@
 import os
 from langchain.chat_models import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
+from tavily import TavilyClient
 
 class AiLibrarian:
     def __init__(self):
@@ -10,9 +11,19 @@ class AiLibrarian:
             max_tokens=1024,
             openai_api_key=os.getenv("OPENAI_API_KEY")
         )
+        self.tavily = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
+
+    def _search(self, query, max_results=5):
+        results = self.tavily.search(query=query, max_results=max_results)
+        excerpts = []
+        for r in results.get("results", []):
+            excerpts.append(f"- {r.get('title', '')}: {r.get('content', '')}")
+        return "\n".join(excerpts)
 
     def question_stoics(self, question):
         print(f"API Key loaded: {'Yes' if os.getenv('OPENAI_API_KEY') else 'No'}")
+
+        retrieval_context = self._search(f"stoic philosophy quotes {question}")
 
         prompt_template = """
                             You are a terse, precise, and slightly imperious librarian.
@@ -23,6 +34,9 @@ class AiLibrarian:
                             Your sources include:
                             - Classical Stoics: Zeno of Citium, Chrysippus, Cato the Younger, Cicero, Seneca, Epictetus, Marcus Aurelius
                             - Stoic-adjacent thinkers: Boethius, Michel de Montaigne, Simone Weil, Viktor Frankl
+
+                            The following search results may help you find real passages. Use them as a guide but apply your own judgment:
+                            {context}
 
                             Find two passages from these thinkers that genuinely address the philosophical depth of the question.
                             Include a direct quote for each where possible, not just a summary of the idea.
@@ -38,11 +52,13 @@ class AiLibrarian:
         verify_template = """
                             You are a rigorous fact-checker reviewing a librarian's response for accuracy.
 
+                            The following search results are provided to help you verify the quotes:
+                            {context}
+
                             For each quote or passage in the response below:
-                            - Assess whether the quote is likely to be accurate and genuinely from the cited author and work.
+                            - If search results confirm the quote, keep it as-is.
                             - If you are confident a quote is fabricated, misattributed, or significantly misworded, replace it with one you are more confident is real, or remove it and note why.
                             - If you are uncertain about a quote but it is plausible, keep it but add a brief note such as '(approximate wording)' after the citation.
-                            - Do not alter quotes you are confident are accurate.
                             - Preserve the tone, structure, and flow of the original response.
                             - Do not add preamble or explain your verification process. Return only the corrected response.
 
@@ -56,12 +72,19 @@ class AiLibrarian:
         question_chain = question_prompt | self.llm
         verify_chain = verify_prompt | self.llm
 
-        first_response = question_chain.invoke({"question": question})
-        verified_response = verify_chain.invoke({"response": first_response.content.strip()})
+        first_response = question_chain.invoke({"question": question, "context": retrieval_context})
+
+        verify_context = self._search(f"verify stoic quote {first_response.content.strip()[:200]}")
+        verified_response = verify_chain.invoke({
+            "response": first_response.content.strip(),
+            "context": verify_context
+        })
         return verified_response.content.strip()
 
     def question_navajo(self, question):
         print(f"API Key loaded: {'Yes' if os.getenv('OPENAI_API_KEY') else 'No'}")
+
+        retrieval_context = self._search(f"Navajo Nation quotes wisdom oral history {question}")
 
         prompt_template = """
                             You are a careful and respectful librarian, deeply aware of the weight of what you are sharing.
@@ -72,6 +95,9 @@ class AiLibrarian:
                             - Oral stories, interviews, or recorded conversations with Navajo individuals
                             - Traditional Navajo stories or fables passed down through generations
                             - Poems, speeches, or writings by Navajo authors, poets, or public figures
+
+                            The following search results may help you find real passages. Use them as a guide but apply your own judgment:
+                            {context}
 
                             Find two passages that address the question. Include a direct quote for each where possible.
                             Prefer lesser-known sources over widely repeated material.
@@ -91,11 +117,13 @@ class AiLibrarian:
 
                             Fabricating or misattributing Navajo voices is harmful. Apply a high standard.
 
+                            The following search results are provided to help you verify the quotes:
+                            {context}
+
                             For each quote or passage in the response below:
-                            - Assess whether the quote is likely to be authentic and genuinely from the cited speaker, author, or source.
+                            - If search results confirm the quote, keep it as-is.
                             - If you are confident a quote is fabricated, misattributed, or significantly misworded, remove it entirely and note why rather than replacing it with another guess.
                             - If you are uncertain about a quote but it is plausible, keep it but add a brief note such as '(source approximate)' after the citation.
-                            - Do not alter quotes you are confident are accurate.
                             - Preserve the tone, structure, and flow of the original response.
                             - Do not add preamble or explain your verification process. Return only the corrected response.
 
@@ -109,6 +137,11 @@ class AiLibrarian:
         question_chain = question_prompt | self.llm
         verify_chain = verify_prompt | self.llm
 
-        first_response = question_chain.invoke({"question": question})
-        verified_response = verify_chain.invoke({"response": first_response.content.strip()})
+        first_response = question_chain.invoke({"question": question, "context": retrieval_context})
+
+        verify_context = self._search(f"verify Navajo quote {first_response.content.strip()[:200]}")
+        verified_response = verify_chain.invoke({
+            "response": first_response.content.strip(),
+            "context": verify_context
+        })
         return verified_response.content.strip()
