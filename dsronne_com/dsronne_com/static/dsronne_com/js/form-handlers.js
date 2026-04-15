@@ -18,7 +18,14 @@ function initializeFormWithLoading(formId, resultContainerId, loadingSpinnerId) 
                 'X-CSRFToken': formData.get('csrfmiddlewaretoken')
             }
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => {
+                    throw new Error(`Server error ${response.status}: ${text.substring(0, 300)}`);
+                });
+            }
+            return response.json();
+        })
         .then(data => {
             // Hide loading spinner
             document.getElementById(loadingSpinnerId).style.display = 'none';
@@ -29,9 +36,10 @@ function initializeFormWithLoading(formId, resultContainerId, loadingSpinnerId) 
             resultContainer.innerHTML = data.result;
         })
         .catch(error => {
-            console.error('Error:', error);
             document.getElementById(loadingSpinnerId).style.display = 'none';
-            // Handle error case
+            const resultContainer = document.getElementById(resultContainerId);
+            resultContainer.style.display = 'block';
+            resultContainer.innerHTML = `<p><strong>Error:</strong> ${error.message}</p>`;
         });
     });
 }
