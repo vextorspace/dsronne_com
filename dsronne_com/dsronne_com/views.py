@@ -9,21 +9,18 @@ def home(request):
 
 
 def stoic(request):
-    answer = None
-
     if request.method == 'POST':
         form = StoicQuestionForm(request.POST)
         if form.is_valid():
             question = form.cleaned_data['question']
             answer = AiLibrarian().question_stoics(question)
+            return JsonResponse({
+                'result': f'<h3>Sages once said:</h3><p>{answer}</p>'
+            })
     else:
         form = StoicQuestionForm()
 
-    return render(request, 'dsronne_com/stoic.html',
-                  {
-                      'form': form,
-                      'answer': answer
-                  })
+    return render(request, 'dsronne_com/stoic.html', {'form': form})
 
 def navajo(request, ai_librarian=None):
     if not ai_librarian:

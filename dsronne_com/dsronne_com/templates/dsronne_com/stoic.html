@@ -7,15 +7,24 @@
     <h1>Stoic Wisdom</h1>
     <!-- Add your stoic page content here -->
     <h2>Ask the sages</h2>
-    <form action="{% url 'stoic' %}" method="post">
+    <form id="stoicForm" action="{% url 'stoic' %}" method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <input type="submit" value="Ask">
     </form>
-    {% if answer %}
-    <div class="answer-section">
-    <h3>Sages once said:</h3>
-    <p>{{  answer }}</p>
-    </div>
-    {% endif %}
+    <div class="loading-dots" id="loadingDots"></div>
+    <div class="answer-section" id="answerSection"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    initializeFormWithLoading('stoicForm', 'answerSection', 'loadingDots');
+
+    document.getElementById('stoicForm').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            this.dispatchEvent(new Event('submit'));
+        }
+    });
+});
+</script>
 {% endblock %}
