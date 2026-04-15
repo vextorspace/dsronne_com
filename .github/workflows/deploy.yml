@@ -36,6 +36,7 @@ jobs:
       - name: Deploy to Server via SSH and Git Pull
         run: |
           ssh vextorspace@dsronne.com << 'EOF'
+            set -e
             cd ~/dsronne.com
             git pull origin main
             source .venv/bin/activate
