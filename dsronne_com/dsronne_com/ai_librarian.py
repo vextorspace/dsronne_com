@@ -6,7 +6,13 @@ from tavily import TavilyClient
 class AiLibrarian:
     def __init__(self):
         self.llm = ChatOpenAI(
-            model="gpt-4o",
+            model="gpt-5",
+            temperature=0.1,
+            max_tokens=2048,
+            openai_api_key=os.getenv("OPENAI_API_KEY")
+        )
+        self.verifier_llm = ChatOpenAI(
+            model="gpt-5",
             temperature=0.1,
             max_tokens=2048,
             openai_api_key=os.getenv("OPENAI_API_KEY")
@@ -74,7 +80,7 @@ class AiLibrarian:
         verify_prompt = ChatPromptTemplate.from_template(verify_template)
 
         question_chain = question_prompt | self.llm
-        verify_chain = verify_prompt | self.llm
+        verify_chain = verify_prompt | self.verifier_llm
 
         first_response = question_chain.invoke({"question": question, "context": retrieval_context})
 
@@ -143,7 +149,7 @@ class AiLibrarian:
         verify_prompt = ChatPromptTemplate.from_template(verify_template)
 
         question_chain = question_prompt | self.llm
-        verify_chain = verify_prompt | self.llm
+        verify_chain = verify_prompt | self.verifier_llm
 
         first_response = question_chain.invoke({"question": question, "context": retrieval_context})
 
