@@ -106,8 +106,9 @@ class AiLibrarian:
                             After presenting both, add one sentence explaining how together they speak to the question.
                             Cite the speaker, author, or approximate source for each.
 
-                            If you cannot find two authentic passages, say so plainly:
-                            I could not find two real Navajo voices on this topic. You may offer one if only one exists.
+                            If you cannot find two authentic passages from real named sources, offer one if you can find one.
+                            If you cannot find even one, say only: I could not find a real Navajo voice on this topic.
+                            Never present a general description of Navajo philosophy or an unnamed traditional story as if it were a real quote from a real person.
 
                             Question: {question}
                         """
@@ -122,8 +123,10 @@ class AiLibrarian:
 
                             For each quote or passage in the response below:
                             - If search results confirm the quote, keep it as-is.
-                            - If you are confident a quote is fabricated, misattributed, or significantly misworded, remove it entirely and note why rather than replacing it with another guess.
-                            - If you are uncertain about a quote but it is plausible, keep it but add a brief note such as '(source approximate)' after the citation.
+                            - If a passage is a general description of Navajo philosophy rather than a real quote from a named person, remove it entirely -- this is fabrication.
+                            - If you are confident a quote is fabricated, misattributed, or significantly misworded, remove it entirely rather than replacing it with another guess.
+                            - If you are uncertain about a quote but it is plausible and from a named real person, keep it but add a brief note such as '(source approximate)' after the citation.
+                            - If removal leaves only one passage or none, say so honestly rather than padding the response.
                             - Preserve the tone, structure, and flow of the original response.
                             - Do not add preamble or explain your verification process. Return only the corrected response.
 
