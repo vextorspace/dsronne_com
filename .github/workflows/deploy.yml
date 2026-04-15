@@ -28,8 +28,7 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_DEPLAY_PRIVATE_KEY }}
   
       - name: Add server to known_hosts
-        run: |
-          ssh-keyscan -H dsronne.com >> ~/.ssh/known_hosts
+        run: echo "${{ secrets.SSH_KNOWN_HOST }}" >> ~/.ssh/known_hosts
    
       - name: Deploy to Server via SSH and Git Pull
         run: |
